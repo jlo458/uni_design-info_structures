@@ -1,4 +1,4 @@
-// manual hashmap data structure
+// manual hashmap
 
 package structures;
 
@@ -22,7 +22,7 @@ public class MyHashMap<K, V> {
     private int size;
     private int capacity; 
 
-    // @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public MyHashMap() {
         this.capacity = INITIAL_CAPACITY; 
         this.table = new Entry[capacity]; 
@@ -32,7 +32,7 @@ public class MyHashMap<K, V> {
         if (key == null) return 0; 
         int h = key.hashCode(); 
         h ^= (h>>>16); 
-        return Math.abs(h%capacity);
+        return (h & 0x7fffffff) % capacity;   // guarantees positive
     } 
 
     public V get(K key) {
@@ -47,6 +47,7 @@ public class MyHashMap<K, V> {
         return null;
     }
 
+    // may crash if put(key, null) is called
     public boolean containsKey(K key) {
         return get(key) != null;
     }
