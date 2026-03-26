@@ -1,4 +1,4 @@
-// my red black tree data structure
+// manual red-black tree
 
 package structures;
 
@@ -41,7 +41,8 @@ public class MyRBTree<K extends Comparable<K>, V> {
     } 
 
     public V getNode(K key) {
-        return findNode(key) == null ? null : findNode(key).value;
+        Node<K, V> node = findNode(key);
+        return node == null ? null : node.value;
     }
 
     public void put(K key, V value) {
@@ -175,7 +176,7 @@ public class MyRBTree<K extends Comparable<K>, V> {
                     // Case: n now parent of initial parent, just need to change colour of parent and gParent
                     setColour(parent, BLACK);
                     setColour(grandparent, RED);
-                    rotateRight(grandparent);
+                    rotateLeft(grandparent);
 
 
                 }
@@ -205,7 +206,9 @@ public class MyRBTree<K extends Comparable<K>, V> {
                 }
             }
 
-        }
+        } 
+
+        root.colour = BLACK;
     } 
 
     private boolean colourOf(Node<K, V> n) { 
