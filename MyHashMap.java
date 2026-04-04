@@ -1,4 +1,4 @@
-// manual hashmap
+// manual hash map
 
 package structures;
 
