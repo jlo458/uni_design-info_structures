@@ -30,7 +30,7 @@ public class Movies implements IMovies{
     }
 
     private static class CollectionInfo {
-        int    id;
+        int id;
         String name, posterPath, backdropPath;
 
         CollectionInfo(int id, String name, String posterPath, String backdropPath) {
@@ -77,7 +77,9 @@ public class Movies implements IMovies{
 
             for (Genre g : genres) this.genres.add(g);
             for (String l : languages) this.languages.add(l);
-        }
+        } 
+
+    }
 
     /**
      * Adds data about a film to the data structure
@@ -143,7 +145,7 @@ public class Movies implements IMovies{
 
         if (m == null) return false; 
 
-        for (Genre g : m.genres.toArray()) {
+        for (Genre g : m.genres.toArray(new Genre[0])) {
             MyHashSet<Integer> set = genreInd.get(g);
             if (set != null) set.remove(id);
         }
@@ -168,8 +170,10 @@ public class Movies implements IMovies{
      */
     @Override
     public int[] getAllIDs() {
-        // TODO Implement this function
-        return null;
+        Integer[] keys = movies.getKeys();
+        int[] ids = new int[keys.length];
+        for (int i = 0; i < keys.length; i++) ids[i] = keys[i];
+        return ids;
     }
 
     /**
@@ -181,10 +185,20 @@ public class Movies implements IMovies{
      * @param end   The end point of the range of dates
      * @return An array of film IDs that were released between start and end
      */
+
     @Override
     public int[] getAllIDsReleasedInRange(LocalDate start, LocalDate end) {
-        // TODO Implement this function
-        return null;
+        MyArrayList<MyHashSet<Integer>> sets = releaseDateInd.subMap(start, end);
+        int total = 0;
+        for (int i = 0; i < sets.size(); i++) total += sets.get(i).size();
+
+        int[] ids = new int[total];
+        int idx = 0;
+        for (int i = 0; i < sets.size(); i++) {
+            int[] batch = sets.get(i).toIntArray();
+            for (int id : batch) ids[idx++] = id;
+        }
+        return ids;
     }
 
     /**
@@ -342,7 +356,7 @@ public class Movies implements IMovies{
     @Override
     public double getRuntime(int id) {
         Movie m = movies.get(id); 
-        return m == null ? -2.0d : m.title;
+        return m == null ? -2.0d : m.runtime;
     }
 
     /**
@@ -411,8 +425,11 @@ public class Movies implements IMovies{
      */
     @Override
     public boolean setVote(int id, double voteAverage, int voteCount) {
-        // TODO Implement this function
-        return false;
+        Movie m = movies.get(id);
+        if (m == null) return false;
+        m.voteAverage = voteAverage;
+        m.voteCount   = voteCount;
+        return true;
     }
 
     /**
@@ -425,8 +442,8 @@ public class Movies implements IMovies{
      */
     @Override
     public double getVoteAverage(int id) {
-        // TODO Implement this function
-        return -2.0d;
+        Movie m = movies.get(id);
+        return m == null ? -2.0d : m.voteAverage;
     }
 
     /**
@@ -458,8 +475,17 @@ public class Movies implements IMovies{
      */
     @Override
     public boolean addToCollection(int filmID, int collectionID, String collectionName, String collectionPosterPath, String collectionBackdropPath) {
-        // TODO Implement this function
-        return false;
+        Movie m = movies.get(filmID);
+
+        if (m == null) return false;
+
+        m.collectionID = collectionID;
+        collections.put(collectionID, new CollectionInfo(collectionID, collectionName, collectionPosterPath, collectionBackdropPath));
+
+        if (!collectionInd.containsKey(collectionID)) collectionInd.put(collectionID, new MyHashSet<>());
+
+        collectionInd.get(collectionID).add(filmID);
+        return true;
     }
 
     /**
@@ -472,8 +498,9 @@ public class Movies implements IMovies{
      */
     @Override
     public int[] getFilmsInCollection(int collectionID) {
-        // TODO Implement this function
-        return null;
+        MyHashSet<Integer> set = collectionInd.get(collectionID);
+        if (set == null || set.size() == 0) return new int[0];
+        return set.toIntArray();
     }
 
     /**
@@ -485,8 +512,8 @@ public class Movies implements IMovies{
      */
     @Override
     public String getCollectionName(int collectionID) {
-        // TODO Implement this function
-        return null;
+        CollectionInfo c = collections.get(collectionID);
+        return c == null ? null : c.name;
     }
 
     /**
@@ -498,8 +525,8 @@ public class Movies implements IMovies{
      */
     @Override
     public String getCollectionPoster(int collectionID) {
-        // TODO Implement this function
-        return null;
+        CollectionInfo c = collections.get(collectionID);
+        return c == null ? null : c.posterPath;
     }
 
     /**
@@ -511,8 +538,8 @@ public class Movies implements IMovies{
      */
     @Override
     public String getCollectionBackdrop(int collectionID) {
-        // TODO Implement this function
-        return null;
+        CollectionInfo c = collections.get(collectionID);
+        return c == null ? null : c.backdropPath;
     }
 
     /**
@@ -524,8 +551,8 @@ public class Movies implements IMovies{
      */
     @Override
     public int getCollectionID(int filmID) {
-        // TODO Implement this function
-        return -2; // ????
+        Movie m = movies.get(filmID);
+        return m == null ? -2 : m.collectionID;
     }
 
     /**
@@ -537,8 +564,10 @@ public class Movies implements IMovies{
      */
     @Override
     public boolean setIMDB(int filmID, String imdbID) {
-        // TODO Implement this function
-        return false;
+        Movie m = movies.get(filmID);
+        if (m == null) return false;
+        m.imdbID = imdbID;
+        return true;
     }
 
     /**
@@ -563,8 +592,10 @@ public class Movies implements IMovies{
      */
     @Override
     public boolean setPopularity(int id, double popularity) {
-        // TODO Implement this function
-        return false;
+        Movie m = movies.get(id);
+        if (m == null) return false;
+        m.popularity = popularity;
+        return true;
     }
 
     /**
@@ -590,8 +621,9 @@ public class Movies implements IMovies{
      */
     @Override
     public boolean addProductionCompany(int id, Company company) {
-        // TODO Implement this function
-        return false;
+        Movie m = movies.get(id);
+        if (m == null) return false;
+        return m.companies.add(company);
     }
 
     /**
@@ -603,8 +635,9 @@ public class Movies implements IMovies{
      */
     @Override
     public boolean addProductionCountry(int id, String country) {
-        // TODO Implement this function
-        return false;
+        Movie m = movies.get(id);
+        if (m == null) return false;
+        return m.countries.add(country);
     }
 
     /**
@@ -633,7 +666,7 @@ public class Movies implements IMovies{
     @Override
     public String[] getProductionCountries(int id) {
         Movie m = movies.get(id);
-        return m == null ? null : m.companies.toArray(new String[0]);
+        return m == null ? null : m.countries.toArray(new String[0]);
     }
 
     /**
@@ -657,7 +690,23 @@ public class Movies implements IMovies{
      */
     @Override
     public int[] findFilms(String searchTerm) {
-        // TODO Implement this function
-        return null;
+        if (searchTerm == null || searchTerm.isEmpty()) return new int[0];
+        
+        String lower = searchTerm.toLowerCase();
+
+        MyArrayList<Integer> matches = new MyArrayList<>();
+        Integer[] keys = movies.getKeys();
+        for (Integer id : keys) {
+            Movie m = movies.get(id);
+            if ((m.title         != null && m.title.toLowerCase().contains(lower))
+            || (m.originalTitle != null && m.originalTitle.toLowerCase().contains(lower))
+            || (m.overview      != null && m.overview.toLowerCase().contains(lower))) {
+                matches.add(id);
+            }
+        }
+
+        int[] result = new int[matches.size()];
+        for (int i = 0; i < matches.size(); i++) result[i] = matches.get(i);
+        return result;
     }
 }
