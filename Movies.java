@@ -126,8 +126,10 @@ public class Movies implements IMovies{
         
         } 
 
-        if (!releaseDateInd.findKey(release)) releaseDateInd.put(release, new MyHashSet<>());
-        releaseDateInd.getNode(release).add(id);
+        if (release != null) {
+             if (!releaseDateInd.findKey(release)) releaseDateInd.put(release, new MyHashSet<>());
+             releaseDateInd.getNode(release).add(id);
+        }
 
         return true;
     }
@@ -188,6 +190,8 @@ public class Movies implements IMovies{
 
     @Override
     public int[] getAllIDsReleasedInRange(LocalDate start, LocalDate end) {
+        if (start == null || end == null) return new int[0];
+
         MyArrayList<MyHashSet<Integer>> sets = releaseDateInd.subMap(start, end);
         int total = 0;
         for (int i = 0; i < sets.size(); i++) total += sets.get(i).size();
