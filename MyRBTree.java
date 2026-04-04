@@ -1,10 +1,10 @@
-// manual red-black tree
+// manual rb tree
 
 package structures;
 
 // mention why rb not avl trees
 
-public class MyRBTree<K extends Comparable<K>, V> {
+public class MyRBTree<K extends Comparable<? super K>, V> {
     private static final boolean RED   = true;
     private static final boolean BLACK = false;
 
@@ -108,9 +108,9 @@ public class MyRBTree<K extends Comparable<K>, V> {
         x.right = y.left;
         if (y.left != null) y.left.parent = x;
         y.parent = x.parent;
-        if      (x.parent == null)        root           = y;
-        else if (x == x.parent.left)      x.parent.left  = y;
-        else                              x.parent.right = y;
+        if (x.parent == null) root = y;
+        else if (x == x.parent.left) x.parent.left = y;
+        else x.parent.right = y;
         y.left   = x;
         x.parent = y;
     }
@@ -176,7 +176,7 @@ public class MyRBTree<K extends Comparable<K>, V> {
                     // Case: n now parent of initial parent, just need to change colour of parent and gParent
                     setColour(parent, BLACK);
                     setColour(grandparent, RED);
-                    rotateLeft(grandparent);
+                    rotateRight(grandparent);
 
 
                 }
@@ -202,7 +202,7 @@ public class MyRBTree<K extends Comparable<K>, V> {
 
                     setColour(parent, BLACK);
                     setColour(grandparent, RED);
-                    rotateRight(grandparent);
+                    rotateLeft(grandparent);
                 }
             }
 
