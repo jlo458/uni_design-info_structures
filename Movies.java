@@ -307,7 +307,7 @@ public class Movies implements IMovies{
     @Override
     public long getBudget(int id) {
         Movie m = movies.get(id); 
-        return m == null ? -2 : m.budget;
+        return m == null ? -1 : m.budget;
     }
 
     /**
@@ -320,7 +320,7 @@ public class Movies implements IMovies{
     @Override
     public long getRevenue(int id) {
         Movie m = movies.get(id); 
-        return m == null ? -2 : m.revenue;
+        return m == null ? -1 : m.revenue;
     }
 
     /**
@@ -360,7 +360,7 @@ public class Movies implements IMovies{
     @Override
     public double getRuntime(int id) {
         Movie m = movies.get(id); 
-        return m == null ? -2.0d : m.runtime;
+        return m == null ? -1.0d : m.runtime;
     }
 
     /**
@@ -447,7 +447,7 @@ public class Movies implements IMovies{
     @Override
     public double getVoteAverage(int id) {
         Movie m = movies.get(id);
-        return m == null ? -2.0d : m.voteAverage;
+        return m == null ? -1.0d : m.voteAverage;
     }
 
     /**
@@ -461,7 +461,7 @@ public class Movies implements IMovies{
     @Override
     public int getVoteCount(int id) {
         Movie m = movies.get(id); 
-        return m == null ? -2 : m.voteCount;
+        return m == null ? -1 : m.voteCount;
     }
 
     /**
@@ -556,7 +556,7 @@ public class Movies implements IMovies{
     @Override
     public int getCollectionID(int filmID) {
         Movie m = movies.get(filmID);
-        return m == null ? -2 : m.collectionID;
+        return m == null ? -1 : m.collectionID;
     }
 
     /**
@@ -612,7 +612,7 @@ public class Movies implements IMovies{
     @Override
     public double getPopularity(int id) {
         Movie m = movies.get(id); 
-        return m == null ? -2 : m.popularity;
+        return m == null ? -1 : m.popularity;
     }
 
     /**
