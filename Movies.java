@@ -1,6 +1,7 @@
 package stores;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import interfaces.IMovies;
 import structures.*;
@@ -147,10 +148,11 @@ public class Movies implements IMovies{
 
         if (m == null) return false; 
 
-        for (Genre g : m.genres.toArray(new Genre[0])) {
-            MyHashSet<Integer> set = genreInd.get(g);
+        Object[] genreKeys = m.genres.toArray();
+        for (Object g : genreKeys) {
+            MyHashSet<Integer> set = genreInd.get((Genre) g);
             if (set != null) set.remove(id);
-        }
+}
 
         MyHashSet<Integer> dateSet = releaseDateInd.getNode(m.release);
         if (dateSet != null) dateSet.remove(id);
@@ -172,9 +174,9 @@ public class Movies implements IMovies{
      */
     @Override
     public int[] getAllIDs() {
-        Integer[] keys = movies.getKeys();
+        Object[] keys = movies.getKeys();
         int[] ids = new int[keys.length];
-        for (int i = 0; i < keys.length; i++) ids[i] = keys[i];
+        for (int i = 0; i < keys.length; i++) ids[i] = (Integer) keys[i];
         return ids;
     }
 
@@ -280,8 +282,17 @@ public class Movies implements IMovies{
      */
     @Override
     public Genre[] getGenres(int id) {
-        Movie m = movies.get(id); 
-        return m != null ? m.genres.toArray(new Genre[0]) : null;
+        Movie m = movies.get(id);
+        if (m == null) return null;
+
+        Object[] raw = m.genres.toArray();
+        Genre[] result = new Genre[raw.length];
+
+        for (int i = 0; i < raw.length; i++) {
+            result[i] = (Genre) raw[i];
+        } 
+
+        return result;
     }
 
     /**
@@ -333,7 +344,19 @@ public class Movies implements IMovies{
     @Override
     public String[] getLanguages(int id) {
         Movie m = movies.get(id);
-        return m == null ? null : m.languages.toArray(new String[0]);
+        if (m == null) return null;
+
+        Object[] raw = m.languages.toArray();
+        String[] result = new String[raw.length];
+
+        for (int i = 0; i < raw.length; i++) {
+            result[i] = (String) raw[i];
+        }
+
+        // change later to actual sorting algorithm
+        Arrays.sort(result, String::compareTo);
+
+        return result;
     }
 
     /**
@@ -655,8 +678,18 @@ public class Movies implements IMovies{
     @Override
     public Company[] getProductionCompanies(int id) {
         Movie m = movies.get(id);
-        return m == null ? null : m.companies.toArray(new Company[0]); // swap around
+        if (m == null) return null;
 
+        Object[] raw = m.companies.toArray();
+        Company[] result = new Company[raw.length];
+
+        for (int i = 0; i < raw.length; i++) {
+            result[i] = (Company) raw[i];
+        }
+
+        java.util.Arrays.sort(result, (a, b) -> a.getID() - b.getID());
+
+        return result;
     }
 
     /**
@@ -670,7 +703,11 @@ public class Movies implements IMovies{
     @Override
     public String[] getProductionCountries(int id) {
         Movie m = movies.get(id);
-        return m == null ? null : m.countries.toArray(new String[0]);
+        if (m == null) return null;
+        Object[] raw = m.countries.toArray();
+        String[] result = new String[raw.length];
+        for (int i = 0; i < raw.length; i++) result[i] = (String) raw[i];
+        return result;
     }
 
     /**
@@ -699,13 +736,17 @@ public class Movies implements IMovies{
         String lower = searchTerm.toLowerCase();
 
         MyArrayList<Integer> matches = new MyArrayList<>();
-        Integer[] keys = movies.getKeys();
-        for (Integer id : keys) {
-            Movie m = movies.get(id);
+        Object[] keys = movies.getKeys();
+
+        for (Object id : keys) {
+
+            Integer movieId = (Integer) id;
+            Movie m = movies.get(movieId);
+
             if ((m.title         != null && m.title.toLowerCase().contains(lower))
             || (m.originalTitle != null && m.originalTitle.toLowerCase().contains(lower))
             || (m.overview      != null && m.overview.toLowerCase().contains(lower))) {
-                matches.add(id);
+                matches.add(movieId);
             }
         }
 
