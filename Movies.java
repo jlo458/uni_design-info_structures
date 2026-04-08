@@ -50,8 +50,11 @@ public class Movies implements IMovies{
         LocalDate release;
         boolean adult, video;
 
-        MyHashSet<Genre>   genres    = new MyHashSet<>();
-        MyHashSet<String>  languages = new MyHashSet<>();
+        Genre[] genres;
+        String[] languages;
+
+        //MyHashSet<Genre>   genres    = new MyHashSet<>();
+        //MyHashSet<String>  languages = new MyHashSet<>();
         MyHashSet<String>  countries = new MyHashSet<>();
         MyHashSet<Company> companies = new MyHashSet<>();
 
@@ -59,6 +62,8 @@ public class Movies implements IMovies{
               String status, Genre[] genres, LocalDate release, long budget, long revenue,
               String[] languages, String originalLanguage, double runtime,
               String homepage, boolean adult, boolean video, String poster) {
+
+
             this.title = title;
             this.originalTitle = originalTitle;
             this.overview = overview;
@@ -76,8 +81,11 @@ public class Movies implements IMovies{
             this.collectionID = -1;   // not in any collection
             this.popularity = 0.0;
 
-            for (Genre g : genres) this.genres.add(g);
-            for (String l : languages) this.languages.add(l);
+            this.genres = genres;
+            this.languages = languages;
+
+            //for (Genre g : genres) this.genres.add(g);
+            //for (String l : languages) this.languages.add(l);
         } 
 
     }
@@ -148,11 +156,10 @@ public class Movies implements IMovies{
 
         if (m == null) return false; 
 
-        Object[] genreKeys = m.genres.toArray();
-        for (Object g : genreKeys) {
-            MyHashSet<Integer> set = genreInd.get((Genre) g);
+        for (Genre g : m.genres) {
+            MyHashSet<Integer> set = genreInd.get(g);
             if (set != null) set.remove(id);
-}
+        }
 
         MyHashSet<Integer> dateSet = releaseDateInd.getNode(m.release);
         if (dateSet != null) dateSet.remove(id);
@@ -284,15 +291,7 @@ public class Movies implements IMovies{
     public Genre[] getGenres(int id) {
         Movie m = movies.get(id);
         if (m == null) return null;
-
-        Object[] raw = m.genres.toArray();
-        Genre[] result = new Genre[raw.length];
-
-        for (int i = 0; i < raw.length; i++) {
-            result[i] = (Genre) raw[i];
-        } 
-
-        return result;
+        return m.genres;
     }
 
     /**
@@ -345,18 +344,7 @@ public class Movies implements IMovies{
     public String[] getLanguages(int id) {
         Movie m = movies.get(id);
         if (m == null) return null;
-
-        Object[] raw = m.languages.toArray();
-        String[] result = new String[raw.length];
-
-        for (int i = 0; i < raw.length; i++) {
-            result[i] = (String) raw[i];
-        }
-
-        // change later to actual sorting algorithm
-        Arrays.sort(result, String::compareTo);
-
-        return result;
+        return m.languages;
     }
 
     /**
