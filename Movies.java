@@ -1,3 +1,5 @@
+// main movies file, stores movies based on my hashmap and red-black tree data structures
+
 package stores;
 
 import java.time.LocalDate;
